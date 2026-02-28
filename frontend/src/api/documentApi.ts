@@ -24,12 +24,11 @@ export const documentApi = {
         const res = await fetch(`${BASE_URL}/documents/${id}`, {method: "DELETE"})
         if (!res.ok) throw new Error("Delete Failed");
         return res.json();
-    }
+    },
 
     getDocument: async (id: string): Promise<{doc: DocumentDetailResponse}> => {
         const res = await fetch(`${BASE_URL}/documents/${id}`, {method: "GET"});
         if (!res.ok) throw new Error("Could not get the document");
-        
         return res.json();
         
     }

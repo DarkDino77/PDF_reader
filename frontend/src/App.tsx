@@ -7,6 +7,9 @@ const App: React.FC = () => {
     <BrowserRouter>
       <div className="min-h-screen bg-neutral-900 text-neutral-100">
         <Routes>
+
+            <Route path="/" element={<VaultScreen/>}></Route>
+
             <Route path="*" element={<Navigate to="/" replace/>} />
 
         </Routes>

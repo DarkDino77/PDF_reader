@@ -1,20 +1,49 @@
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'danger' | 'ghost';
-  loading?: boolean;
+import {clsx, type ClassValue} from "clsx"
+import { Children, type ComponentProps } from "react";
+import { twMerge } from "tailwind-merge";
+
+
+function cn(...inputs:ClassValue[]) {
+  return twMerge(clsx(inputs))
 }
 
-export const Button: React.FC<ButtonProps> = ({ children, variant = 'primary', loading, className, ...props }) => {
-  const baseStyles = "px-4 py-2 rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2";
-  const variants = {
-    primary: "bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/20",
-    danger: "bg-neutral-800 border border-neutral-600 text-neutral-300 hover:bg-red-900/20 hover:text-red-400 hover:border-red-900/50",
-    ghost: "text-neutral-500 hover:text-white underline underline-offset-4"
-  };
+interface ButtonProps extends ComponentProps<"button"> {
+  variant?: "primary" | "secondary" | "danger" | "ghost";
+  isLoading?: boolean;
+}
 
-  return (
-    <button className={`${baseStyles} ${variants[variant]} ${className}`} {...props}>
-      {loading && <div className="w-4 h-4 border-2 border-t-transparent animate-spin rounded-full" />}
-      {children}
-    </button>
-  );
+
+const Button = ({
+  className,
+  variant = "primary",
+  isLoading,
+  children,
+  disabled,
+  ...props //random standar stuff
+}: ButtonProps) => {
+
+ const baseStyles = "px-4 py-2 rounded-md font-medium transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed";
+
+const variants = {
+  primary: "bg-blue-600 text-white hover:bg-blue-700 active:scale-95",
+  secondary: "bg-slate-200 text-slate-800 hover:bg-slate-300",
+  danger: "bg-red-500 text-white hover:bg-red-500",
+  ghost: "bg-transparent hover:bg-slate-100 text-slate-600"
 };
+
+return (
+  <button
+    className={cn(baseStyles, variants[variant], className)}
+    disabled={disabled || isLoading}
+    {...props}
+  >
+    {isLoading ? (
+      <span className="mr-2 h-4 w-4 animate-spin border-2 border-current border-t-transparent rounded-full"></span>
+    ):null}
+    {children}
+
+  </button>
+);
+};
+
+export default Button

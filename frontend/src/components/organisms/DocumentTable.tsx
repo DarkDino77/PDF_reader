@@ -1,18 +1,16 @@
-import { Button } from '../atoms/Button';
+import type { DocumentResponse } from "../../types/api";
 
-export const DocumentTable: React.FC = () => {
-  const { documents, refresh } = useDocuments();
+interface DocumentTableProps {
+    documents: DocumentResponse[];
+    onDelete:(id:number) => void;
+    loading: boolean;
+    error: string| null;   
+}
 
-  return (
-    <table className="w-full">
-      {documents.map(doc => (
-        <tr key={doc.id}>
-          <td>{doc.name}</td>
-          <td>
-            <Button variant="danger" onClick={() => handleDelete(doc.id)}>Delete</Button>
-          </td>
-        </tr>
-      ))}
-    </table>
-  );
+export const DocumentTable = ({documents, onDelete, loading, error}:DocumentTableProps) =>{
+    if(loading && document.length === 0 ){
+
+        return ()
+
+    }
 };
