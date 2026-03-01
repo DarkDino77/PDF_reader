@@ -9,7 +9,7 @@ const VaultScreen: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 selection:bg-blue-500/30">
-    <div className="max-w-6xl mx-auto p-6 md:p-12">
+    <div className="w-full px-6 py-8 lg:px-12">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
 
         <div>
@@ -25,7 +25,7 @@ const VaultScreen: React.FC = () => {
         </div>
       </header>
       
-      <main className="bg-neutral-900/50 rounded-2xl border border-neutral-800 shadow-2xl backdrop-blur-sm overflow-hidden">
+      <main className="w-full bg-neutral-900/50 rounded-2xl border border-neutral-800 shadow-2xl backdrop-blur-sm overflow-hidden">
         <DocumentTable 
           documents={documents}
           loading={loading}
