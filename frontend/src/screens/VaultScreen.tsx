@@ -1,22 +1,39 @@
 // src/screens/VaultScreen.tsx
 import React from 'react';
 import { useDocuments } from '../hooks/useDocuments';
-import { DocumentTable } from '../components/organisms/DocumentTable';
-import { UploadButton } from '../components/molecules/UploadButton';
+import  DocumentTable  from '../components/organisms/DocumentTable';
+import  UploadButton  from '../components/molecules/UploadButton';
 
 const VaultScreen: React.FC = () => {
-  const { refresh } = useDocuments();
+  const { documents, loading, error, refresh, removeDocument } = useDocuments();
 
   return (
-    <div className="max-w-4xl mx-auto p-8">
-      <header className="flex justify-between items-center border-b border-neutral-700 pb-6 mb-8">
-        <h1 className="text-4xl font-bold text-white">PDF <span className="text-blue-500">Vault</span></h1>
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 selection:bg-blue-500/30">
+    <div className="max-w-6xl mx-auto p-6 md:p-12">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
+
+        <div>
+            <h1 className="text-5xl font-black tracking-tighter text-white">
+              MY <span className="text-blue-500">VAULT</span>
+            </h1>
+            <p className="text-neutral-500 font-medium mt-2">
+              {documents.length} {documents.length === 1 ? 'document' : 'documents'} stored in library
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
         <UploadButton onUploadSuccess={refresh} />
+        </div>
       </header>
       
-      <main className="bg-neutral-800 rounded-xl border border-neutral-700 shadow-xl overflow-hidden">
-        <DocumentTable />
+      <main className="bg-neutral-900/50 rounded-2xl border border-neutral-800 shadow-2xl backdrop-blur-sm overflow-hidden">
+        <DocumentTable 
+          documents={documents}
+          loading={loading}
+          error={error}
+          onDelete={removeDocument}
+        />
       </main>
+    </div>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import type React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import VaultScreen from "./screens/VaultScreen";
 
 
 const App: React.FC = () => {
