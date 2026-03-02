@@ -44,9 +44,9 @@ const DocumentTable = ({documents, onDelete, loading, error}:DocumentTableProps)
             <table className='w-full text-left border-collapse'>
                 <thead>
                     <tr className='border-b border-neutral-800 bg-neutral-900/50'>
-                        <th className='px-6 py-4 text-sm font-semibold text-neutral-400 uppercase tracking-wider'>Document</th>
-                        <th className='px-6 py-4 text-sm font-semibold text-neutral-400 uppercase tracking-wider'>Status</th>
-                        <th className='px-6 py-4 text-sm font-semibold text-neutral-400 uppercase tracking-wider text-right'>Actions</th>
+                        <th className='w-[70%] px-6 py-4 text-sm font-semibold text-neutral-400 uppercase tracking-wider'>Document</th>
+                        <th className='w-[15%] px-6 py-4 text-sm font-semibold text-neutral-400 uppercase tracking-wider'>Status</th>
+                        <th className='w-[15%] px-6 py-4 text-sm font-semibold text-neutral-400 uppercase tracking-wider text-right'>Actions</th>
                     </tr>
                 </thead>
                 <tbody className='divide-y divide-neutral-800'>
