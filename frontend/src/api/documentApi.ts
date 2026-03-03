@@ -26,7 +26,7 @@ export const documentApi = {
         return res.json();
     },
 
-    getDocument: async (id: string): Promise<{doc: DocumentDetailResponse}> => {
+    getDocument: async (id: string): Promise<DocumentDetailResponse> => {
         const res = await fetch(`${BASE_URL}/documents/${id}`, {method: "GET"});
         if (!res.ok) throw new Error("Could not get the document");
         return res.json();

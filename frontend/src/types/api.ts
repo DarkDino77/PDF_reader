@@ -8,10 +8,10 @@ export interface DocumentResponse {
 
 export interface TextBlock {
     id: number;
-    document_id: number;
     content: string;
     block_type: string; 
     sort_order: number;
+    font_size: number;
 }
 
 export interface DocumentDetailResponse extends DocumentResponse {
