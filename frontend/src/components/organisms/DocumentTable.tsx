@@ -1,6 +1,7 @@
 import  Button  from '../atoms/Button';
 import type { DocumentResponse } from "../../types/api";
 import { FileText, Trash2, ExternalLink, Loader2, AlertCircle } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 
 interface DocumentTableProps {
     documents: DocumentResponse[];
@@ -10,6 +11,8 @@ interface DocumentTableProps {
 }
 
 const DocumentTable = ({documents, onDelete, loading, error}:DocumentTableProps) =>{
+    const navigate = useNavigate();
+
     if(loading && documents.length === 0 ){
 
         return (
@@ -75,7 +78,12 @@ const DocumentTable = ({documents, onDelete, loading, error}:DocumentTableProps)
                             </td>
                             <td className='px-6 py-4 text-right'>
                                 <div className='flex justify-end gap-2'>
-                                    <Button variant='ghost' className='h-9 px-3' title='Open Reader'>
+                                    <Button 
+                                        variant='ghost' 
+                                        className='h-9 px-3' 
+                                        title='Open Reader' 
+                                        onClick={() => navigate(`/document/${doc.id}`)}
+                                    >
                                         <ExternalLink className="w-4 h-4"></ExternalLink>
                                     </Button>
                                     <Button

@@ -1,5 +1,5 @@
 import {clsx, type ClassValue} from "clsx"
-import { Children, type ComponentProps } from "react";
+import {  type ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
 
 
@@ -27,7 +27,7 @@ const Button = ({
 const variants = {
   primary: "bg-blue-600 text-white hover:bg-blue-700 active:scale-95",
   secondary: "bg-slate-200 text-slate-800 hover:bg-slate-300",
-  danger: "bg-red-500 text-white hover:bg-red-500",
+  danger: "bg-red-500 text-white hover:bg-red-600",
   ghost: "bg-transparent hover:bg-slate-100 text-slate-600"
 };
 

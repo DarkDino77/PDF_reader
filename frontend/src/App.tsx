@@ -1,6 +1,7 @@
 import type React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import VaultScreen from "./screens/VaultScreen";
+import DetailsScreen from "./screens/VaultScreen";
 
 
 const App: React.FC = () => {
@@ -10,7 +11,7 @@ const App: React.FC = () => {
         <Routes>
 
             <Route path="/" element={<VaultScreen/>}></Route>
-
+            <Route path="/document/:id" element={<DetailsScreen/>}></Route>
             <Route path="*" element={<Navigate to="/" replace/>} />
 
         </Routes>
