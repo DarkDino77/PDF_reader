@@ -29,7 +29,7 @@ const UploadButton = ({folderId, onUploadSuccess}: UploadButtonProps) => {
                 ref={fileInputRef}
                 onChange={handleFileChange}
                 accept=".pdf"
-                className="hdden"
+                className="hidden"
             />
             <Button
                 variant="primary"
