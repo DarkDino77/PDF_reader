@@ -11,6 +11,7 @@ import (
 	"os"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type StorageProvider interface {
@@ -32,7 +33,9 @@ func (s *DocumentService) GetAllDocuments() ([]models.Document, error) {
 func (s *DocumentService) GetDocumentById(id uint) (*models.Document, error) {
 	var doc models.Document
 
-	if err := database.DB.First(&doc, id).Error; err != nil {
+	if err := database.DB.Preload("Blocks", func(db *gorm.DB) *gorm.DB {
+		return db.Order("sort_order ASC")
+	}).First(&doc, id).Error; err != nil {
 		return nil, err
 	}
 

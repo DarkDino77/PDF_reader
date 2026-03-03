@@ -85,7 +85,7 @@ func (dc *DocumentController) GetDocument(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dtos.MapDocumentToDTO(doc))
+	c.JSON(http.StatusOK, dtos.MapDocumentToDetailDTO(doc))
 
 }
 
