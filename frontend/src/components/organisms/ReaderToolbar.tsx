@@ -7,16 +7,20 @@ interface ReaderToolbarProps {
   title: string;
   fontSize: number;
   lineHeight: number;
+  width: number;
   onFontSizeChange: (value: number) => void;
   onLineHeightChange: (value: number) => void;
+  onWidthChange: (value: number) => void;
 }
 
 const ReaderToolbar = ({
   title,
   fontSize,
   lineHeight,
+  width,
   onFontSizeChange,
   onLineHeightChange,
+  onWidthChange,
 }: ReaderToolbarProps) => {
   const naigate = useNavigate();
 
@@ -37,8 +41,10 @@ const ReaderToolbar = ({
       <ReaderControls
         fontSize={fontSize}
         lineHeight={lineHeight}
+        width={width}
         onFontSizeChange={onFontSizeChange}
         onLineHeightChange={onLineHeightChange}
+        onWidthChange={onWidthChange}
       />
     </header>
   );

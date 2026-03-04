@@ -13,6 +13,7 @@ const DetailsScreen: React.FC = () => {
 
   const [fontSize, setFontSize] = useState(16);
   const [lineHeight, setLineHeight] = useState(1.7);
+  const [width, setWidth] = useState(65);
 
   if (loading) {
     return (
@@ -38,8 +39,10 @@ const DetailsScreen: React.FC = () => {
         title={document.title}
         fontSize={fontSize}
         lineHeight={lineHeight}
+        width={width}
         onFontSizeChange={setFontSize}
         onLineHeightChange={setLineHeight}
+        onWidthChange={setWidth}
       />
 
       {!document.is_processed && (
@@ -49,7 +52,7 @@ const DetailsScreen: React.FC = () => {
         </div>
       )}
 
-      <main className="max-w-2xl mx-auto px-6 py-12">
+      <main style={{ maxWidth: `${width}%` }} className="mx-auto px-6 py-12">
         <TextContent
           blocks={document.blocks}
           fontSize={fontSize}
