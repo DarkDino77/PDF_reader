@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import TextContent from '../components/organisms/TextContent';
 import Spinner from '../components/atoms/Spinner';
+import ReaderToolbar from '../components/organisms/ReaderToolbar';
 
 const DetailsScreen: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -33,6 +34,14 @@ const DetailsScreen: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100">
+      <ReaderToolbar
+        title={document.title}
+        fontSize={fontSize}
+        lineHeight={lineHeight}
+        onFontSizeChange={setFontSize}
+        onLineHeightChange={setLineHeight}
+      />
+
       {!document.is_processed && (
         <div className="flex items-center justify-center gap-2 py-3 bg-amber-500/10 border-b border-amber-500/20 text-amber-400 text-sm">
           <Loader2 className="w-4 h-4 animate-spin"></Loader2>
