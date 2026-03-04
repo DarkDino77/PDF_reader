@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import type { TextBlock } from '../../types/api';
 
 interface TextContentProps {
@@ -34,25 +35,25 @@ interface TextBlockNodeProps {
   fontSize: number;
   lineHeight: number;
 }
+
+const styles: Record<string, string> = {
+  h1: 'text-3xl font-bold text-white pt-6',
+  h2: 'text-2xl font-bold text-white pt-4',
+  h3: 'text-xl font-semibold text-neutral-100 pt-3',
+  h4: 'text-lg font-semibold text-neutral-200 pt-2',
+  p: 'text-neutral-300',
+};
+
 const TextBlockNode = ({ block, fontSize, lineHeight }: TextBlockNodeProps) => {
-  if (block.block_type === 'heading') {
-    return (
-      <h2
-        style={{ fontSize: `${Math.round(fontSize * 1.35)}px` }}
-        className="font-bold text-white pt-4"
-      >
-        {block.content}
-      </h2>
-    );
-  }
+  const Tag = block.block_type as keyof JSX.IntrinsicElements;
 
   return (
-    <p
+    <Tag
       style={{ fontSize: `${fontSize}px`, lineHeight }}
-      className="text-neutral-300"
+      className={styles[block.block_type] ?? styles['p']}
     >
       {block.content}
-    </p>
+    </Tag>
   );
 };
 
