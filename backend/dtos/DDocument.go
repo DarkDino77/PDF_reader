@@ -44,8 +44,10 @@ func MapDocumentToDetailDTO(doc *models.Document) DocumentDetailResponse {
 		blocks[i] = TextBlockReponse{
 			ID:        block.ID,
 			Content:   block.Content,
+			FontSize: block.FontSize,
 			BlockType: block.BlockType,
 			SortOrder: block.SortOrder,
+			Image: block.Image,
 		}
 	}
 	return DocumentDetailResponse{

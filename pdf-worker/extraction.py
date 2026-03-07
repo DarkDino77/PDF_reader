@@ -80,22 +80,23 @@ def extract_image_as_base64(page: fitz.Page, block:dict) -> str|None:
     img = render_block_as_pil(page, block)
     if img is None:
         return None
-    return pil_to_base64
+    return pil_to_base64(img)
     
 def render_block_as_pil(page: fitz.Page, block:dict) -> Image.Image | None:
     try:
-        clip = fitz.Rect(block[bbox])
+        clip = fitz.Rect(block["bbox"])
         mat = fitz.Matrix(2,2)
-        pix = page.getpixmap(matrix=mat, clip=clip)
+        pix = page.get_pixmap(matrix=mat, clip=clip)
         return Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-    except Exception:
+    except Exception as e:
+        print(f"render_block_as_pil failed: {e}")
         return None
 
 def pil_to_base64(img: Image.Image) -> str:
     buf = io.BytesIO()
     img.save(buf, format="PNG")
-    b64 = base64.b64encode(buf.getvalue()).decode
-    return f"data:image/png;base64, {b64}"
+    b64 = base64.b64encode(buf.getvalue()).decode()
+    return f"data:image/png;base64,{b64}"
 
 
 def extract_equation(
@@ -112,6 +113,7 @@ def extract_equation(
     try: 
         buf = io.BytesIO()
         img.save(buf, format="PNG")
+        buf.seek(0)
         response = httpx.post(
             f"{PIX2TEX_URL}/predict/",
             files={"files": ("equation.png", buf, "image/png")},

@@ -131,6 +131,7 @@ func (s *DocumentService) ProcessWithPython(docID uint, path string) {
 			FontSize  float64 `json:"font_size"`
 			Page      int     `json:"page"`
 			BlockType string  `json:"block_type" `
+			Image     *string `json:"image"` 
 		} `json:"blocks"`
 	}
 	json.NewDecoder(resp.Body).Decode(&result)
@@ -141,6 +142,8 @@ func (s *DocumentService) ProcessWithPython(docID uint, path string) {
 			Content:    b.Content,
 			SortOrder:  i,
 			BlockType:  b.BlockType,
+			FontSize:   b.FontSize,
+			Image:      b.Image, 
 		}
 		database.DB.Create(&block)
 	}

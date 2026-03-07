@@ -137,5 +137,7 @@ async def process_pdf(request: ProcessRequest):
     flat_blocks = tree.to_flat_list()
 
     print(f"Extracted {len(flat_blocks)} blocks across {page_count} pages")
+    figures = [b for b in flat_blocks if b["block_type"] in ("figure", "table","equation")]
+    print(f"Figures with image data: {sum(1 for f in figures if f['image'])}/{len(figures)}")
 
     return {"blocks": flat_blocks}
