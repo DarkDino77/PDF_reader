@@ -18,7 +18,8 @@ from extraction import (
     is_caption,
     split_block_by_font_change,
     is_equation_block,
-    extract_equation
+    extract_equation,
+    merge_equation_bboxes
 )
 
 from tree import build_document_tree
@@ -26,6 +27,59 @@ from tree import build_document_tree
 class ProcessRequest(BaseModel):
     file_path: str
 
+
+EQUATION_MERGE_GAP = 40
+def merge_adjacent_equations(raw_blocks: list[dict], doc: fitz.Document) -> list[dict]:
+    merged = []
+    i = 0
+    while i < len(raw_blocks):
+        block = raw_blocks[i]
+        if block.get("override") != "equation":
+            merged.append(block)
+            i += 1
+            continue
+
+        group = [block]
+        while i+1 < len(raw_blocks):
+            next_block  = raw_blocks[i + 1]
+            if next_block.get("override") != "equation":
+                break
+            if next_block["page"] != block["page"]:
+                break
+
+            last_y1 = group[-1]["bbox"][3]
+            next_y0 = next_block["bbox"][1]
+            if (next_y0 - last_y1) > EQUATION_MERGE_GAP:
+                break
+            i += 1
+            group.append(next_block)
+
+        if len(group) == 1: 
+            merged.append(block)
+            i += 1
+            continue
+
+        merged_bbox = merge_equation_bboxes(group)
+        if merged_bbox is None:
+            merged.extend(group)
+            i += 1
+            continue
+        page = doc[block["page"] - 1]
+        latex, image_data = extract_equation(page, {"bbox": merged_bbox} )
+        merged.append({
+            "page": block["page"],
+            "content": latex,
+            "size": 0,
+            "is_bold": False,
+            "override": "equation",
+            "image": image_data,
+            "bbox": merged_bbox
+
+        })
+        i+= 1
+
+    return merged
+        
 
 app = FastAPI()
 
@@ -75,6 +129,7 @@ async def process_pdf(request: ProcessRequest):
                     "is_bold": False,
                     "override": "equation",
                     "image": image_data,
+                    "bbox": list(block["bbox"])
 
                 })
                 continue
@@ -94,10 +149,11 @@ async def process_pdf(request: ProcessRequest):
                     "image": None,
                 })
 
-
+    raw_blocks = merge_adjacent_equations(raw_blocks, doc)
     doc.close()
     
     text_blocks_only = [block for block in raw_blocks if block["size"] > 0]
+
     repeating = find_repeating_blocks(text_blocks_only, page_count)
     raw_blocks = [block for block in raw_blocks if block["content"] not in repeating]
 

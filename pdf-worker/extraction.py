@@ -107,6 +107,9 @@ def extract_equation(
     return_string = "[EQUATION]"
     if img is None:
         return return_string, None
+
+    if img.width == 0 or img.height == 0:
+        return return_string, None
     
     image_data = pil_to_base64(img)
 
@@ -116,11 +119,13 @@ def extract_equation(
         buf.seek(0)
         response = httpx.post(
             f"{PIX2TEX_URL}/predict/",
-            files={"files": ("equation.png", buf, "image/png")},
+            files={"file": ("equation.png", buf, "image/png")},
             timeout=30.0
         )
         response.raise_for_status()
-        latex = response.json().get("latex", "").strip()
+        result = response.json()
+
+        latex = result.strip() if isinstance(result, str) else result.get("latex", "").strip()
 
         if not latex:
             return return_string, image_data
@@ -149,6 +154,16 @@ def is_equation_block(block: dict) -> bool:
     if total_chars == 0:
         return False
     
-    return(match_chars/total_chars)>0.5
+    return(match_chars/total_chars) > 0.4
+
+
+def merge_equation_bboxes(blocks: list[dict]) -> dict:
+    if not all("bbox" in b and b["bbox"] is not None for b in blocks):
+        return None
+    x0 = min(b["bbox"][0] for b in blocks)
+    y0 = min(b["bbox"][1] for b in blocks)
+    x1 = max(b["bbox"][2] for b in blocks)
+    y1 = max(b["bbox"][3] for b in blocks)
+    return [x0,y0,x1,y1]
 
 
