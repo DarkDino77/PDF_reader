@@ -4,7 +4,7 @@ services:
   backend:
     build: ./backend
     ports:
-      - "8080:8080"
+      - '8080:8080'
     environment:
       - PORT=8080
       - GIN_MODE=release
@@ -18,18 +18,22 @@ services:
       - ./uploads:/app/uploads
     depends_on:
       db:
-        condition: service_healthy 
+        condition: service_healthy
     networks:
       - backend-network
 
   pdf-worker:
     build: ./pdf-worker
     expose:
-      - "8000"
+      - '8000'
     volumes:
       - ./uploads:/app/uploads
     networks:
       - backend-network
+    depends_on:
+      - pix2tex
+    environment:
+      - PIX2TEX_URL=http://pix2tex:8502
 
   db:
     image: postgres:15-alpine
@@ -39,11 +43,11 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -53,9 +57,18 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "5173:5173"
+      - '5173:5173'
     depends_on:
       - backend
+    networks:
+      - backend-network
+
+  pix2tex:
+    build:
+      context: ./pix2tex
+    restart: unless-stopped
+    expose:
+      - '8502'
     networks:
       - backend-network
 

@@ -2,3 +2,5 @@ fastapi
 uvicorn
 pymupdf
 pydantic
+pillow
+httpx

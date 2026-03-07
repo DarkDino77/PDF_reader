@@ -16,7 +16,9 @@ from extraction import (
     extract_image_as_base64,
     get_column,
     is_caption,
-    split_block_by_font_change
+    split_block_by_font_change,
+    is_equation_block,
+    extract_equation
 )
 
 from tree import build_document_tree
@@ -61,6 +63,20 @@ async def process_pdf(request: ProcessRequest):
                 continue
 
             if block["type"] != 0:
+                continue
+
+
+            if is_equation_block(block):
+                latex, image_data = extract_equation(page, block)
+                raw_blocks.append({
+                    "page": page_num + 1,
+                    "content": latex,
+                    "size": 0,
+                    "is_bold": False,
+                    "override": "equation",
+                    "image": image_data,
+
+                })
                 continue
 
             caption = is_caption(block, blocks)

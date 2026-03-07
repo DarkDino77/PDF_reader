@@ -21,7 +21,7 @@ def build_document_tree(classified_blocks: list[dict])-> DocumentNode:
             image=block.get("image")
         )
 
-        if block["block_type"] in ("p", "caption", "figure", "table"):
+        if block["block_type"] in ("p", "caption", "figure", "table", "equation"):
             stack[-1].add_child(node)
         else: 
             current_rank = HEADING_RANK[block["block_type"]]

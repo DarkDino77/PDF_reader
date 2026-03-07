@@ -1,10 +1,14 @@
 import base64
 import os
+import io
 
 import fitz
 import httpx
+from PIL import Image
 
 PIX2TEX_URL = os.getenv("PIX2TEX_URL", "http://pix2tex:8502")
+
+MATH_FONTS = {"cmmi", "cmsy", "cmex", "cmr", "msam", "msbm", "stmary"}
 
 def get_column(block: dict, page_width: float) -> int:
     return 1 if block["bbox"][0] > (page_width * 0.45) else 0
@@ -73,13 +77,76 @@ def classify_image_block(block: dict) -> str:
 
 
 def extract_image_as_base64(page: fitz.Page, block:dict) -> str|None:
+    img = render_block_as_pil(page, block)
+    if img is None:
+        return None
+    return pil_to_base64
+    
+def render_block_as_pil(page: fitz.Page, block:dict) -> Image.Image | None:
     try:
-        clip = fitz.Rect(block["bbox"])
+        clip = fitz.Rect(block[bbox])
         mat = fitz.Matrix(2,2)
-        pix = page.get_pixmap(matrix=mat, clip=clip)
-        data = pix.tobytes("png")
-        b64 = base64.b64encode(data).decode()
-        return f"data:image/png;base64,{b64}"
+        pix = page.getpixmap(matrix=mat, clip=clip)
+        return Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
     except Exception:
         return None
+
+def pil_to_base64(img: Image.Image) -> str:
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    b64 = base64.b64encode(buf.getvalue()).decode
+    return f"data:image/png;base64, {b64}"
+
+
+def extract_equation(
+        page: fitz.Page,
+        block:dict
+) -> tuple[str, str | None]:
+    img = render_block_as_pil(page, block)
+    return_string = "[EQUATION]"
+    if img is None:
+        return return_string, None
     
+    image_data = pil_to_base64(img)
+
+    try: 
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        response = httpx.post(
+            f"{PIX2TEX_URL}/predict/",
+            files={"files": ("equation.png", buf, "image/png")},
+            timeout=30.0
+        )
+        response.raise_for_status()
+        latex = response.json().get("latex", "").strip()
+
+        if not latex:
+            return return_string, image_data
+        return latex, image_data
+    except Exception as e:
+        print(f"pix2tex service call failed: {e}")
+        return return_string, image_data
+    
+
+def is_equation_block(block: dict) -> bool:
+
+    all_spans = [span for line in block["lines"] for span in line["spans"]]
+    if not all_spans:
+        return False
+    
+    match_chars = 0
+    total_chars = 0
+
+    for span in all_spans:
+        font_lower = span["font"].lower()
+        char_count = len(span["text"].strip())
+        total_chars += char_count
+        if any(mf in font_lower for mf in MATH_FONTS):
+            match_chars += char_count
+
+    if total_chars == 0:
+        return False
+    
+    return(match_chars/total_chars)>0.5
+
+
